@@ -1,0 +1,161 @@
+import java.util.*;
+
+// Book class to represent individual books
+class Book {
+    private String title;
+    private String author;
+    private int ISBN;
+    private boolean available;
+
+    // Constructor
+    public Book(String title, String author, int ISBN) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = ISBN;
+        this.available = true; // Assume book is available when added to the library
+    }
+
+    // Getters and setters
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getISBN() {
+        return ISBN;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+
+// User class to represent library users
+class User {
+    private String name;
+    private String email;
+
+    // Constructor
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}
+
+// Library class to manage books and users
+class Library {
+    private List<Book> books;
+    private List<User> users;
+
+    // Constructor
+    public Library() {
+        books = new ArrayList<>();
+        users = new ArrayList<>();
+    }
+
+    // Method to add a book to the library
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    // Method to remove a book from the library
+    public void removeBook(Book book) {
+        books.remove(book);
+    }
+
+    // Method to register a user
+    public void registerUser(User user) {
+        users.add(user);
+    }
+
+    // Method to search for a book by title
+    public Book searchBookByTitle(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title)) {
+                return book;
+            }
+        }
+        return null; // Book not found
+    }
+
+    // Method to search for a book by author
+    public List<Book> searchBooksByAuthor(String author) {
+        List<Book> result = new ArrayList<>();
+        for (Book book : books) {
+            if (book.getAuthor().equalsIgnoreCase(author)) {
+                result.add(book);
+            }
+        }
+        return result;
+    }
+
+    // Method to issue a book to a user
+    public boolean issueBook(Book book, User user) {
+        if (book.isAvailable()) {
+            book.setAvailable(false);
+            return true; // Book issued successfully
+        } else {
+            return false; // Book not available
+        }
+    }
+
+    // Method to return a book to the library
+    public void returnBook(Book book) {
+        book.setAvailable(true);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Sample usage of the library system
+        Library library = new Library();
+
+        // Adding books to the library
+        Book book1 = new Book("Title1", "Author1", 123456);
+        Book book2 = new Book("Title2", "Author2", 789012);
+        library.addBook(book1);
+        library.addBook(book2);
+
+        // Registering users
+        User user1 = new User("User1", "user1@example.com");
+        User user2 = new User("User2", "user2@example.com");
+        library.registerUser(user1);
+        library.registerUser(user2);
+
+        // Searching for books
+        Book foundBook = library.searchBookByTitle("Title1");
+        if (foundBook != null) {
+            System.out.println("Book found: " + foundBook.getTitle());
+        } else {
+            System.out.println("Book not found.");
+        }
+
+        // Issuing a book
+        boolean issued = library.issueBook(book1, user1);
+        if (issued) {
+            System.out.println("Book issued successfully to " + user1.getName());
+        } else {
+            System.out.println("Book not available for issue.");
+        }
+
+        // Returning a book
+        library.returnBook(book1);
+        System.out.println("Book returned successfully.");
+    }
+}
