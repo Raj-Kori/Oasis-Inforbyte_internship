@@ -1,0 +1,45 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from google.colab import drive
+
+# Mount Google Drive
+drive.mount('/content/drive')
+
+# Load the dataset from Google Drive
+file_path = '/content/drive/MyDrive/DATA_SET/Unemployment.csv'
+unemployment_data = pd.read_csv(file_path)
+
+# Data preprocessing
+# Handle missing values, convert data types, etc.
+
+# Extract year from the "Date" column
+unemployment_data['Year'] = pd.to_datetime(unemployment_data[' Date']).dt.year
+
+# Exploratory Data Analysis (EDA)
+# Example EDA:
+sns.lineplot(data=unemployment_data, x="Year", y=" Estimated Unemployment Rate (%)", hue="Region")
+plt.title("Unemployment Rate Over Time")
+plt.xlabel("Year")
+plt.ylabel("Unemployment Rate (%)")
+plt.show()
+
+# Statistical Analysis
+# Example statistical analysis:
+correlation = unemployment_data.corr()
+print("Correlation Matrix:")
+print(correlation)
+
+# Machine Learning (Optional)
+# Example machine learning model training and evaluation:
+
+# Visualization
+# Example visualization:
+sns.boxplot(data=unemployment_data, x="Region", y=" Estimated Unemployment Rate (%)")
+plt.title("Distribution of Unemployment Rate by Region")
+plt.xlabel("Region")
+plt.ylabel("Unemployment Rate (%)")
+plt.show()
+
+# Conclusion and Recommendations
+# Summarize findings and provide recommendations based on the analysis
