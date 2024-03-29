@@ -1,0 +1,187 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+// Interface for ATM operations
+interface ATMOperations {
+    void displayBalance();
+    void deposit(double amount);
+    void withdraw(double amount);
+    void transfer(String recipientAccountId, double amount);
+    void transactionHistory();
+}
+
+// Class representing a bank account
+class BankAccount {
+    private String accountId;
+    private String pin;
+    private double balance;
+
+    public BankAccount(String accountId, String pin, double balance) {
+        this.accountId = accountId;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+
+    public void withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+        } else {
+            System.out.println("Insufficient funds!");
+        }
+    }
+
+    public void transfer(BankAccount recipient, double amount) {
+        if (balance >= amount) {
+            withdraw(amount);
+            recipient.deposit(amount);
+            System.out.println("Transfer successful!");
+        } else {
+            System.out.println("Insufficient funds!");
+        }
+    }
+}
+
+// Class representing the ATM interface
+public class ATM implements ATMOperations {
+    private Map<String, BankAccount> accounts;
+    private BankAccount currentAccount;
+    private Scanner scanner;
+
+    public ATM() {
+        accounts = new HashMap<>();
+        // Add some sample accounts
+        accounts.put("123456", new BankAccount("123456", "1234", 1000.0));
+        accounts.put("654321", new BankAccount("654321", "4321", 2000.0));
+        scanner = new Scanner(System.in);
+    }
+
+    public void start() {
+        System.out.println("Welcome to the ATM!");
+        boolean loggedIn = false;
+        do {
+            System.out.print("Enter account ID: ");
+            String accountId = scanner.nextLine();
+            System.out.print("Enter PIN: ");
+            String pin = scanner.nextLine();
+            loggedIn = authenticate(accountId, pin);
+            if (!loggedIn) {
+                System.out.println("Invalid account ID or PIN. Please try again.");
+            }
+        } while (!loggedIn);
+
+        // Once logged in, provide ATM functionalities
+        displayMenu();
+    }
+
+    private boolean authenticate(String accountId, String pin) {
+        if (accounts.containsKey(accountId)) {
+            currentAccount = accounts.get(accountId);
+            return currentAccount.getPin().equals(pin);
+        }
+        return false;
+    }
+
+    private void displayMenu() {
+        int choice;
+        do {
+            System.out.println("\nATM Menu:");
+            System.out.println("1. Display Balance");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Transfer");
+            System.out.println("5. Transaction History");
+            System.out.println("6. Quit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            
+            switch (choice) {
+                case 1:
+                    displayBalance();
+                    break;
+                case 2:
+                    System.out.print("Enter amount to deposit: ");
+                    double depositAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    deposit(depositAmount);
+                    break;
+                case 3:
+                    System.out.print("Enter amount to withdraw: ");
+                    double withdrawAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    withdraw(withdrawAmount);
+                    break;
+                case 4:
+                    System.out.print("Enter recipient's account ID: ");
+                    String recipientAccountId = scanner.nextLine();
+                    System.out.print("Enter amount to transfer: ");
+                    double transferAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    transfer(recipientAccountId, transferAmount);
+                    break;
+                case 5:
+                    transactionHistory();
+                    break;
+                case 6:
+                    System.out.println("Quitting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        } while (choice != 6);
+    }
+
+    @Override
+    public void displayBalance() {
+        System.out.println("Current Balance: $" + currentAccount.getBalance());
+    }
+
+    @Override
+    public void deposit(double amount) {
+        currentAccount.deposit(amount);
+        System.out.println("$" + amount + " deposited successfully.");
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        currentAccount.withdraw(amount);
+    }
+
+    @Override
+    public void transfer(String recipientAccountId, double amount) {
+        BankAccount recipient = accounts.get(recipientAccountId);
+        if (recipient != null) {
+            currentAccount.transfer(recipient, amount);
+        } else {
+            System.out.println("Recipient account not found.");
+        }
+    }
+
+    @Override
+    public void transactionHistory() {
+        System.out.println("Transaction History:");
+        // Implement transaction history functionality here
+    }
+
+    public static void main(String[] args) {
+        ATM atm = new ATM();
+        atm.start();
+    }
+}
