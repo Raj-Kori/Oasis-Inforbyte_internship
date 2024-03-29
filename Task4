@@ -1,0 +1,136 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+// Class representing a user profile
+class UserProfile {
+    private String username;
+    private String password;
+
+    public UserProfile(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    // Getters for username and password
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+}
+
+// Class representing a multiple-choice question
+class MCQ {
+    private String question;
+    private String[] options;
+    private int correctOption;
+
+    public MCQ(String question, String[] options, int correctOption) {
+        this.question = question;
+        this.options = options;
+        this.correctOption = correctOption;
+    }
+
+    // Getters for question and options
+    public String getQuestion() {
+        return question;
+    }
+
+    public String[] getOptions() {
+        return options;
+    }
+
+    public int getCorrectOption() {
+        return correctOption;
+    }
+}
+
+// Class representing the online examination system
+public class OnlineExaminationSystem {
+    private Map<String, UserProfile> users;
+    private Map<Integer, MCQ> questions;
+    private Scanner scanner;
+
+    public OnlineExaminationSystem() {
+        users = new HashMap<>();
+        // Initialize sample questions
+        questions = new HashMap<>();
+        questions.put(1, new MCQ("What is the capital of France?", new String[]{"A. London", "B. Paris", "C. Rome", "D. Berlin"}, 1));
+        questions.put(2, new MCQ("Which planet is known as the Red Planet?", new String[]{"A. Venus", "B. Mars", "C. Jupiter", "D. Saturn"}, 2));
+        questions.put(3, new MCQ("Who wrote the play 'Romeo and Juliet'?", new String[]{"A. William Shakespeare", "B. Jane Austen", "C. Charles Dickens", "D. Mark Twain"}, 1));
+        questions.put(4, new MCQ("What is the chemical symbol for water?", new String[]{"A. H2O", "B. CO2", "C. O2", "D. NaCl"}, 1));
+        // Add more questions as needed
+        
+        // Add sample usernames and passwords
+        users.put("user1", new UserProfile("user1", "password1"));
+        users.put("user2", new UserProfile("user2", "password2"));
+        
+        scanner = new Scanner(System.in);
+    }
+
+    public void start() {
+        System.out.println("Welcome to the Online Examination System!");
+
+        // Login
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        if (authenticate(username, password)) {
+            System.out.println("Login successful!");
+
+            // Update profile and password
+            // Implement updateProfile and updatePassword methods
+
+            // Take exam
+            takeExam();
+
+            // Logout
+            System.out.println("Logging out...");
+        } else {
+            System.out.println("Invalid username or password. Exiting...");
+        }
+    }
+
+    private boolean authenticate(String username, String password) {
+        if (users.containsKey(username)) {
+            UserProfile userProfile = users.get(username);
+            return userProfile.getPassword().equals(password);
+        }
+        return false;
+    }
+
+    private void takeExam() {
+        int score = 0;
+        for (Integer questionNumber : questions.keySet()) {
+            MCQ question = questions.get(questionNumber);
+            System.out.println("Question " + questionNumber + ": " + question.getQuestion());
+            for (String option : question.getOptions()) {
+                System.out.println(option);
+            }
+            System.out.print("Enter your answer (A/B/C/D): ");
+            String answer = scanner.nextLine();
+            if (answer.equalsIgnoreCase("A") || answer.equalsIgnoreCase("B") ||
+                answer.equalsIgnoreCase("C") || answer.equalsIgnoreCase("D")) {
+                int selectedOption = answer.toUpperCase().charAt(0) - 'A' + 1;
+                if (selectedOption == question.getCorrectOption()) {
+                    System.out.println("Correct!");
+                    score++;
+                } else {
+                    System.out.println("Incorrect!");
+                }
+            } else {
+                System.out.println("Invalid answer! Skipping question...");
+            }
+        }
+        System.out.println("Exam completed! Your score: " + score);
+    }
+
+    public static void main(String[] args) {
+        OnlineExaminationSystem onlineExaminationSystem = new OnlineExaminationSystem();
+        onlineExaminationSystem.start();
+    }
+}
